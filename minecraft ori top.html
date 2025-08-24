@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minecraft Universe - The Ultimate Minecraft Resource</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2Pkf3dZ5S3gYQGQ0N1D6y1hCwH3YhJbP6F4b1b2z6bqkV+MZ1Z+2S3G1fQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root{
+      --bg: #0b0f14;
+      --bg-2: #0e141b;
+      --card: #121922;
+      --text: #f3f6fb;
+      --muted: #9fb3c8;
+      --accent: #3bd16f; /* creeper green */
+      --accent-2: #4bd1ff; /* water */
+      --accent-3: #f6c453; /* sand */
+      --danger: #ff5a7a; /* nether */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 20px;
+    }
+    *{box-sizing:border-box}
+    html, body{margin:0; background:var(--bg); color:var(--text); font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; scroll-behavior:smooth}
+    a{color:inherit; text-decoration:none}
+    .container{width:min(1200px, 92%); margin-inline:auto}
+
+    /* --- Header --- */
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(1.2) blur(8px);
+      background:linear-gradient( to bottom, rgba(11,15,20,.92), rgba(11,15,20,.55));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{display:flex; align-items:center; gap:18px; padding:14px 0}
+    .logo{display:flex; align-items:center; gap:12px; font-weight:800}
+    .logo .mark{width:32px; height:32px}
+    .logo .word{font-family:"Press Start 2P", monospace; font-size:14px; letter-spacing:2px}
+    nav a{opacity:.8; padding:10px 12px; border-radius:12px; transition:.25s}
+    nav a:hover{opacity:1; background:rgba(255,255,255,.06)}
+    .spacer{flex:1}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:14px; background:linear-gradient(135deg,var(--accent),#86f4a2); color:#041006; font-weight:700; box-shadow:var(--shadow); border:none; cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+
+    /* --- Hero --- */
+    .hero{position:relative; overflow:hidden; border-bottom:1px solid rgba(255,255,255,.05)}
+    .hero-inner{display:grid; grid-template-columns:1.1fr .9fr; gap:28px; padding:72px 0}
+    .title{font-family:"Press Start 2P", monospace; line-height:1.2; font-size:clamp(26px, 3.8vw, 46px)}
+    .subtitle{color:var(--muted); margin-top:14px}
+    .pills{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px}
+    .pill{font-size:12px; letter-spacing:.6px; padding:10px 12px; border-radius:999px; background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.08)}
+    .hero-cards{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); transform:translateZ(0); transition:transform .3s ease, box-shadow .3s ease}
+    .card:hover{transform:translateY(-6px) rotateX(2deg) rotateY(-2deg); box-shadow:0 16px 40px rgba(0,0,0,.5)}
+    .kpi{font-size:28px; font-weight:800}
+    .kpi small{display:block; color:var(--muted); font-weight:600; font-size:12px}
+
+    /* canvas pixels */
+    #pixels{position:absolute; inset:0; z-index:0; opacity:.25}
+    .hero>*{position:relative; z-index:1}
+
+    /* --- Sections --- */
+    section{padding:64px 0}
+    h2{font-family:"Press Start 2P", monospace; font-size:clamp(20px,2.8vw,32px); margin:0 0 18px}
+    p.lead{color:var(--muted); margin:0 0 18px}
+
+    /* --- Updates timeline --- */
+    .timeline{position:relative; margin-top:26px}
+    .timeline:before{content:""; position:absolute; left:16px; top:0; bottom:0; width:3px; background:linear-gradient(var(--accent), transparent)}
+    .update{display:grid; grid-template-columns:40px 1fr; gap:16px; margin:18px 0; opacity:0; transform:translateY(12px); transition: .5s ease}
+    .update.reveal{opacity:1; transform:none}
+    .dot{width:20px; height:20px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 6px rgba(59,209,111,.18)}
+    .update .content{background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px;}
+    .tag{display:inline-block; font-size:12px; padding:6px 10px; border-radius:999px; background:rgba(75,209,255,.15); border:1px solid rgba(75,209,255,.25); margin-bottom:8px}
+
+    /* --- Facts slider --- */
+    .slider{position:relative; overflow:hidden; border-radius:var(--radius); border:1px solid rgba(255,255,255,.08); background:var(--card)}
+    .slides{display:flex; transition:transform .6s ease}
+    .slide{min-width:100%; padding:28px; display:grid; gap:10px}
+    .slider .controls{position:absolute; inset:auto 0 0; display:flex; justify-content:center; gap:8px; padding:10px}
+    .dotBtn{width:12px; height:12px; border-radius:50%; border:none; background:rgba(255,255,255,.25); cursor:pointer}
+    .dotBtn.active{background:var(--accent)}
+
+    /* --- Tips grid --- */
+    .grid{display:grid; gap:14px}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+    @media (max-width: 900px){
+      .hero-inner{grid-template-columns:1fr}
+      .grid.cols-3{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 640px){
+      .grid.cols-3, .grid.cols-2{grid-template-columns:1fr}
+    }
+
+    .tip{position:relative; padding:18px; border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.08)}
+    .tip i{font-size:18px; opacity:.9}
+    .tip h4{margin:10px 0 6px}
+    .tip p{margin:0; color:var(--muted)}
+    .tip:after{content:""; position:absolute; inset:auto auto -2px 18px; height:2px; width:40%; background:linear-gradient(90deg, var(--accent), transparent)}
+
+    /* --- Biome cards --- */
+    .biome{display:flex; align-items:center; gap:14px}
+    .biome .emoji{font-size:26px}
+    .biome .meta small{color:var(--muted)}
+
+    /* --- Mobs gallery --- */
+    .scroll-row{display:flex; gap:14px; overflow:auto; padding-bottom:6px; scroll-snap-type:x mandatory}
+    .chip{scroll-snap-align:start; min-width:220px;}
+
+    /* --- Commands table --- */
+    .table{width:100%; border-collapse:separate; border-spacing:0 10px}
+    .table th{font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); text-align:left}
+    .table td, .table th{padding:12px 14px}
+    .table tbody tr{background:var(--card); border:1px solid rgba(255,255,255,.08)}
+    .table tbody tr td:first-child{border-radius:12px 0 0 12px}
+    .table tbody tr td:last-child{border-radius:0 12px 12px 0}
+
+    /* --- Footer --- */
+    footer{padding:32px 0; border-top:1px solid rgba(255,255,255,.06); color:var(--muted)}
+
+    /* --- Fun micro-animations --- */
+    .float{animation:float 4s ease-in-out infinite}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+    .shimmer{background:linear-gradient(110deg, rgba(255,255,255,.1) 8%, rgba(255,255,255,.3) 18%, rgba(255,255,255,0) 33%); background-size:200% 100%; animation:shimmer 2.2s linear infinite}
+    @keyframes shimmer{to{background-position-x:-200%}}
+    .pulse{animation:pulse 2.2s ease-in-out infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(59,209,111,.22)}70%{box-shadow:0 0 0 18px rgba(59,209,111,0)}100%{box-shadow:0 0 0 0 rgba(59,209,111,0)}}
+
+    /* --- Dark toggle --- */
+    .toggle{display:inline-flex; align-items:center; gap:10px; padding:10px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04)}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <a class="logo" href="#top">
+        <!-- Simple grass block -->
+        <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1">
+              <stop offset="0" stop-color="#3bd16f"/>
+              <stop offset="1" stop-color="#2da957"/>
+            </linearGradient>
+          </defs>
+          <rect x="2" y="2" width="60" height="60" rx="8" fill="#6b4626"/>
+          <rect x="2" y="2" width="60" height="26" rx="8" fill="url(#g)"/>
+          <rect x="6" y="30" width="52" height="8" fill="#5a3b20"/>
+        </svg>
+        <span class="word">MINECRAFT UNIVERSE</span>
+      </a>
+      <nav class="spacer">
+        <a href="#updates">Updates</a>
+        <a href="#information">Information</a>
+        <a href="#tips">Tips & Tricks</a>
+        <a href="#mods">Mods</a>
+        <a href="#servers">Servers</a>
+        <a href="#gallery">Gallery</a>
+      </nav>
+      <div class="toggle" id="themeToggle" role="button" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon"></i><span>Dark</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <canvas id="pixels"></canvas>
+    <div class="container hero-inner">
+      <div>
+        <h1 class="title">Minecraft Universe</h1>
+        <p class="subtitle">The ultimate resource for <strong>updates</strong>, <strong>information</strong>, <strong>tips & tricks</strong>, and <strong>community servers</strong> — all in one place.</p>
+        <div class="pills">
+          <span class="pill">Survival</span>
+          <span class="pill">Creative</span>
+          <span class="pill">Redstone</span>
+          <span class="pill">Multiplayer</span>
+          <span class="pill">Modding</span>
+        </div>
+        <div style="margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+          <button class="btn pulse" onclick="document.querySelector('#updates').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-gamepad"></i> Explore</button>
+          <span class="pill">Last updated: <span id="lastUpdated">—</span></span>
+        </div>
+      </div>
+      <div class="hero-cards">
+        <div class="card float">
+          <div class="kpi">∞<small>All Biomes</small></div>
+          <p class="lead">Explore forests, deserts, oceans, and the mysterious Deep Dark.</p>
+        </div>
+        <div class="card">
+          <div class="kpi">100+<small>Mobs & Creatures</small></div>
+          <p class="lead">From friendly animals to terrifying bosses like the Warden.</p>
+        </div>
+        <div class="card">
+          <div class="kpi">500+<small>Items & Blocks</small></div>
+          <p class="lead">Craft, build, and survive with hundreds of unique items.</p>
+        </div>
+        <div class="card shimmer">
+          <div class="kpi">⚡<small>Redstone Engineering</small></div>
+          <p class="lead">Create complex machines and automated systems with redstone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Updates -->
+  <section id="updates">
+    <div class="container">
+      <h2>Recent Minecraft Updates</h2>
+      <p class="lead">Stay current with the latest changes in both Java and Bedrock editions.</p>
+      <div class="timeline">
+        <div class="update reveal">
+          <div class="dot"></div>
+          <div class="content">
+            <span class="tag"><i class="fa-solid fa-coffee"></i> Java Edition 1.20.4</span>
+            <h3>Camels & Cherry Blossoms</h3>
+            <p>New biome features cherry blossom trees and pink petals. Camels can carry players and have a special dash ability.</p>
+          </div>
+        </div>
+        <div class="update">
+          <div class="dot" style="background:var(--accent-2)"></div>
+          <div class="content">
+            <span class="tag" style="background:rgba(75,209,255,.15); border-color:rgba(75,209,255,.25)"><i class="fa-solid fa-bed"></i> Bedrock Edition 1.20.15</span>
+            <h3>Enhanced Trial Chambers</h3>
+            <p>New vault structures with treasure and the Breeze mob. Improved archaeology system with new pottery patterns.</p>
+          </div>
+        </div>
+        <div class="update">
+          <div class="dot" style="background:var(--danger)"></div>
+          <div class="content">
+            <span class="tag" style="background:rgba(255,90,122,.15); border-color:rgba(255,90,122,.25)"><i class="fa-solid fa-bug"></i> Quality of Life</span>
+            <h3>Performance & Bug Fixes</h3>
+            <p>Optimized world generation, improved mob pathfinding, and numerous bug fixes for both editions.</p>
+          </div>
+        </div>
+        <div class="update">
+          <div class="dot" style="background:var(--accent)"></div>
+          <div class="content">
+            <span class="tag" style="background:rgba(59,209,111,.15); border-color:rgba(59,209,111,.25)"><i class="fa-solid fa-seedling"></i> Experimental Features</span>
+            <h3>Sniffer Mob & Archaeology</h3>
+            <p>The Sniffer hatches from ancient eggs and helps find rare plants. Archaeology uses brushes to uncover buried treasures.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Information -->
+  <section id="information">
+    <div class="container">
+      <h2>Minecraft Information Database</h2>
+      <p class="lead">Comprehensive information about all aspects of the Minecraft world.</p>
+      
+      <!-- Biomes -->
+      <h3 style="margin-top:28px">Biomes & Ecosystems</h3>
+      <div class="grid cols-3">
+        <div class="tip biome">
+          <div class="emoji">🌲</div>
+          <div class="meta"><strong>Dark Forest</strong><br><small>Dense with huge mushrooms and witch huts.</small></div>
+        </div>
+        <div class="tip biome">
+          <div class="emoji">🌸</div>
+          <div class="meta"><strong>Cherry Grove</strong><br><small>New biome with pink cherry blossom trees and bees.</small></div>
+        </div>
+        <div class="tip biome">
+          <div class="emoji">❄️</div>
+          <div class="meta"><strong>Snowy Tundra</strong><br><small>Icy biome with igloos and polar bears.</small></div>
+        </div>
+        <div class="tip biome">
+          <div class="emoji">🏜️</div>
+          <div class="meta"><strong>Desert</strong><br><small>Hot biome with temples, villages, and cacti.</small></div>
+        </div>
+        <div class="tip biome">
+          <div class="emoji">🌋</div>
+          <div class="meta"><strong>Basalt Deltas</strong><br><small>Nether biome with basalt columns and lava pools.</small></div>
+        </div>
+        <div class="tip biome">
+          <div class="emoji">🍄</div>
+          <div class="meta"><strong>Mushroom Fields</strong><br><small>Rare biome with giant mushrooms and mooshrooms.</small></div>
+        </div>
+      </div>
+
+      <!-- Mobs -->
+      <h3 style="margin-top:28px">Mobs & Creatures</h3>
+      <div class="scroll-row">
+        <div class="tip chip"><h4>Ender Dragon</h4><p>The final boss in The End dimension. Drops XP and the dragon egg.</p></div>
+        <div class="tip chip"><h4>Warden</h4><p>The most powerful mob, blind but sensitive to sound and vibration.</p></div>
+        <div class="tip chip"><h4>Wither</h4><p>Created with soul sand and wither skeletons. Drops the nether star.</p></div>
+        <div class="tip chip"><h4>Creeper</h4><p>Explodes when near players. Can be charged with lightning.</p></div>
+        <div class="tip chip"><h4>Villager</h4><p>Trades emeralds for valuable items. Can be cured from zombie form.</p></div>
+        <div class="tip chip"><h4>Iron Golem</h4><p>Protects villages from hostile mobs. Can be created by players.</p></div>
+      </div>
+
+      <!-- Items & Blocks -->
+      <h3 style="margin-top:28px">Items, Blocks & Crafting</h3>
+      <div class="grid cols-3">
+        <div class="tip">
+          <i class="fa-solid fa-diamond"></i>
+          <h4>Netherite</h4>
+          <p>The strongest material in the game, created by upgrading diamond with netherite ingots.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-flask"></i>
+          <h4>Potions</h4>
+          <p>Brewed using a brewing stand with nether wart as a base ingredient.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-book"></i>
+          <h4>Enchantments</h4>
+          <p>Apply to tools and weapons at an enchantment table with lapis lazuli.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-cube"></i>
+          <h4>Redstone</h4>
+          <p>Used to create circuits, machines, and automated systems.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-shield"></i>
+          <h4>Shields</h4>
+          <p>Block damage from melee attacks, arrows, and even creeper explosions.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-fire"></i>
+          <h4>Fire Resistance</h4>
+          <p>Essential for exploring the Nether and surviving lava encounters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips & Tricks -->
+  <section id="tips">
+    <div class="container">
+      <h2>Tips & Tricks for Every Player</h2>
+      <p class="lead">From beginner survival to advanced redstone engineering.</p>
+      <div class="grid cols-3">
+        <div class="tip">
+          <i class="fa-solid fa-bed"></i>
+          <h4>Set Spawn Early</h4>
+          <p>Craft a bed as soon as possible. Sleeping skips night and sets your respawn point.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-utensils"></i>
+          <h4>Food Strategy</h4>
+          <p>Breed animals for sustainable food. Cook meat to restore more hunger points.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-shield"></i>
+          <h4>Shield Defense</h4>
+          <p>Use a shield to block creeper explosions and skeleton arrows before counter-attacking.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-diamond"></i>
+          <h4>Optimal Mining</h4>
+          <p>Mine at Y-level -59 for maximum diamond exposure. Use branch mining patterns.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-fire"></i>
+          <h4>Nether Safety</h4>
+          <p>Bring fire resistance potions, gold armor (to pacify piglins), and plenty of blocks.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-gears"></i>
+          <h4>Redstone Basics</h4>
+          <p>Start with simple circuits like automatic doors before advancing to complex machines.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-compass"></i>
+          <h4>Navigation</h4>
+          <p>Use a compass to find your original spawn point. Maps help explore large areas.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-house"></i>
+          <h4>Base Building</h4>
+          <p>Build your base near resources but away from mob spawning areas. Light it well.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-trophy"></i>
+          <h4>Boss Strategies</h4>
+          <p>For the Ender Dragon: destroy end crystals first. For the Wither: maintain distance and use potions.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:28px">Advanced Redstone Projects</h3>
+      <div class="grid cols-2">
+        <div class="tip chip">
+          <h4>Automatic Farm</h4>
+          <p>Create a fully automated crop farm using water, pistons, and hoppers to collect harvests.</p>
+        </div>
+        <div class="tip chip">
+          <h4>Hidden Entrance</h4>
+          <p>Use sticky pistons behind a painting to create a secret door triggered by a hidden lever.</p>
+        </div>
+        <div class="tip chip">
+          <h4>Villager Trading Hall</h4>
+          <p>Breed villagers and create a trading system to obtain enchanted gear and rare items.</p>
+        </div>
+        <div class="tip chip">
+          <h4>Mob Grinder</h4>
+          <p>Design a system that spawns, collects, and kills mobs for automatic XP and loot collection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mods -->
+  <section id="mods">
+    <div class="container">
+      <h2>Mods & Custom Content</h2>
+      <p class="lead">Enhance your Minecraft experience with mods for both Java and Bedrock editions.</p>
+      
+      <h3 style="margin-top:28px">Popular Java Mods</h3>
+      <div class="grid cols-2">
+        <div class="tip">
+          <i class="fa-solid fa-coffee"></i>
+          <h4>OptiFine</h4>
+          <p>Improves performance and adds HD textures, shaders, and zoom functionality.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-coffee"></i>
+          <h4>JEI (Just Enough Items)</h4>
+          <p>Shows all recipes and items in the game with search functionality.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-coffee"></i>
+          <h4>Biomes O' Plenty</h4>
+          <p>Adds dozens of new biomes with unique trees, flowers, and terrain generation.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-coffee"></i>
+          <h4>Tinkers' Construct</h4>
+          <p>Revolutionizes tool creation with customizable parts and materials.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:28px">Bedrock Add-Ons</h3>
+      <div class="grid cols-2">
+        <div class="tip">
+          <i class="fa-solid fa-bed"></i>
+          <h4>Texture Packs</h4>
+          <p>Change the look of blocks and items with HD textures and visual styles.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-bed"></i>
+          <h4>Shader Packs</h4>
+          <p>Enhance graphics with realistic lighting, shadows, and water effects.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-bed"></i>
+          <h4>Behavior Packs</h4>
+          <p>Add new mechanics and gameplay elements to existing or new content.</p>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-bed"></i>
+          <h4>Custom Skins</h4>
+          <p>Personalize your character with unique appearances and animations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servers -->
+  <section id="servers">
+    <div class="container">
+      <h2>Community Servers</h2>
+      <p class="lead">Join active communities and play with other Minecraft enthusiasts.</p>
+      
+      <h3 style="margin-top:28px">Tamil Minecraft Servers</h3>
+      <div class="grid cols-2">
+        <div class="tip">
+          <i class="fa-solid fa-server"></i>
+          <h4>RAGE MC</h4>
+          <p>Active Tamil community with survival, creative, and mini-games. Friendly staff and regular events.</p>
+          <div style="margin-top:10px">
+            <span class="pill">Version: 1.20.4</span>
+            <span class="pill">Players: 50+</span>
+          </div>
+        </div>
+        <div class="tip">
+          <i class="fa-solid fa-server"></i>
+          <h4>Tamil Craft</h4>
+          <p>Focus on building and community projects. Great for beginners and experienced players alike.</p>
+          <div style="margin-top:10px">
+            <span class="pill">Version: 1.19.8</span>
+            <span class="pill">Players: 30+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery">
+    <div class="container">
+      <h2>Minecraft Gallery</h2>
+      <p class="lead">Explore stunning images of biomes, structures, and player creations.</p>
+      
+      <!-- Biomes Gallery -->
+      <h3 style="margin-top:28px">Biomes</h3>
+      <div class="grid cols-3">
+        <div class="tip">
+          <div style="height:180px; background:#228B22; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Forest Biome</div>
+        </div>
+        <div class="tip">
+          <div style="height:180px; background:#DEB887; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold">Desert Biome</div>
+        </div>
+        <div class="tip">
+          <div style="height:180px; background:#4169E1; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Ocean Biome</div>
+        </div>
+      </div>
+
+      <!-- Structures Gallery -->
+      <h3 style="margin-top:28px">Structures</h3>
+      <div class="grid cols-3">
+        <div class="tip">
+          <div style="height:180px; background:#8B4513; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Village</div>
+        </div>
+        <div class="tip">
+          <div style="height:180px; background:#2F4F4F; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Stronghold</div>
+        </div>
+        <div class="tip">
+          <div style="height:180px; background:#8B0000; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Nether Fortress</div>
+        </div>
+      </div>
+
+      <!-- Mobs Gallery -->
+      <h3 style="margin-top:28px">Mobs</h3>
+      <div class="grid cols-3">
+        <div class="tip">
+          <div style="height:180px; background:#8B4513; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Zombie</div>
+        </div>
+        <div class="tip">
+          <div style="height:180px; background:#C0C0C0; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold">Skeleton</div>
+        </div>
+        <div class="tip">
+          <div style="height:180px; background:#008000; border-radius:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold">Creeper</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fun Facts -->
+  <section id="facts">
+    <div class="container">
+      <h2>Fun & Interesting Facts</h2>
+      <p class="lead">Quick bites of trivia to impress your friends.</p>
+      <div class="slider" aria-roledescription="carousel">
+        <div class="slides" id="slides">
+          <div class="slide">
+            <h3>1) Creepers were a bug 👾</h3>
+            <p>They came from a coding mistake while trying to model a pig—happy accident!</p>
+          </div>
+          <div class="slide">
+            <h3>2) The world is huge 🌍</h3>
+            <p>Java worlds are ~60 million blocks across; you'll never see it all in one lifetime.</p>
+          </div>
+          <div class="slide">
+            <h3>3) Endermen speak backwards 🗣️</h3>
+            <p>Their creepy sounds are distorted human phrases played in reverse.</p>
+          </div>
+          <div class="slide">
+            <h3>4) Note blocks are tunable 🎵</h3>
+            <p>Different blocks under note blocks change the instrument type—try wool vs. glowstone!</p>
+          </div>
+          <div class="slide">
+            <h3>5) Minecraft is educational 🎓</h3>
+            <p>Schools worldwide use Minecraft to teach coding, math, and history concepts.</p>
+          </div>
+          <div class="slide">
+            <h3>6) Best-selling game 🏆</h3>
+            <p>Minecraft is the best-selling video game of all time with over 300 million copies sold.</p>
+          </div>
+        </div>
+        <div class="controls" id="dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commands -->
+  <section id="commands">
+    <div class="container">
+      <h2>Handy Commands (Java Edition)</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Command</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/gamemode creative</code></td>
+            <td>Switch to creative for testing redstone or builds.</td>
+          </tr>
+          <tr>
+            <td><code>/gamemode survival</code></td>
+            <td>Switch back to survival mode.</td>
+          </tr>
+          <tr>
+            <td><code>/give @p diamond_pickaxe{Enchantments:[{id:efficiency,lvl:5}]}</code></td>
+            <td>Give yourself an Efficiency V diamond pickaxe.</td>
+          </tr>
+          <tr>
+            <td><code>/tp @p ~ ~ ~</code></td>
+            <td>Teleport to your current coordinates (refreshes chunk).</td>
+          </tr>
+          <tr>
+            <td><code>/locate structure village</code></td>
+            <td>Find the nearest village.</td>
+          </tr>
+          <tr>
+            <td><code>/time set day</code></td>
+            <td>Make it daytime instantly.</td>
+          </tr>
+          <tr>
+            <td><code>/weather clear</code></td>
+            <td>Stop rain and thunderstorms.</td>
+          </tr>
+          <tr>
+            <td><code>/effect give @p speed 30 2</code></td>
+            <td>Give yourself Speed II for 30 seconds.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap">
+        <div>Built with <span aria-hidden="true">🟩</span> blocks & animations. Your ultimate Minecraft resource hub.</div>
+        <div>
+          <a href="https://discord.gg/T6ByPtcsRD" target="_blank" style="display:inline-flex; align-items:center; gap:6px; padding:8px 12px; background:var(--accent); color:#041006; border-radius:12px; font-weight:600">
+            <i class="fab fa-discord"></i> Join Discord
+          </a>
+        </div>
+        <div>© <span id="year"></span> Minecraft Universe — Fan-made</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- Last updated + year ---
+    document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- Theme toggle ---
+    const toggle = document.getElementById('themeToggle');
+    let dark = true;
+    toggle.addEventListener('click', () => {
+      dark = !dark;
+      if(!dark){
+        document.documentElement.style.setProperty('--bg', '#f6f7fb');
+        document.documentElement.style.setProperty('--bg-2', '#edf1f5');
+        document.documentElement.style.setProperty('--card', '#ffffff');
+        document.documentElement.style.setProperty('--text', '#0b0f14');
+        document.documentElement.style.setProperty('--muted', '#4b5a6b');
+        toggle.querySelector('span').textContent = 'Light';
+        toggle.querySelector('i').className = 'fa-solid fa-sun';
+      }else{
+        document.documentElement.style.setProperty('--bg', '#0b0f14');
+        document.documentElement.style.setProperty('--bg-2', '#0e141b');
+        document.documentElement.style.setProperty('--card', '#121922');
+        document.documentElement.style.setProperty('--text', '#f3f6fb');
+        document.documentElement.style.setProperty('--muted', '#9fb3c8');
+        toggle.querySelector('span').textContent = 'Dark';
+        toggle.querySelector('i').className = 'fa-solid fa-moon';
+      }
+    });
+
+    // --- Scroll reveal for updates ---
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('reveal'); })
+    }, {threshold:.2});
+    document.querySelectorAll('.update').forEach(el=> io.observe(el));
+
+    // --- Simple pixel particle canvas in hero ---
+    const cvs = document.getElementById('pixels');
+    const ctx = cvs.getContext('2d');
+    let W=0,H=0; const px=[]; const N=100;
+    function resize(){ W = cvs.width = cvs.offsetWidth; H = cvs.height = cvs.offsetHeight; }
+    window.addEventListener('resize', resize); resize();
+    for(let i=0;i<N;i++) px.push({x:Math.random()*W,y:Math.random()*H,s:2+Math.random()*3, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4, a:.2+Math.random()*.5});
+    (function loop(){ requestAnimationFrame(loop); ctx.clearRect(0,0,W,H); px.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W) p.vx*=-1; if(p.y<0||p.y>H) p.vy*=-1; ctx.globalAlpha=p.a; ctx.fillStyle='#3bd16f'; ctx.fillRect(p.x,p.y,p.s,p.s); }); })();
+
+    // --- Facts slider ---
+    const slides = document.getElementById('slides');
+    const dotsWrap = document.getElementById('dots');
+    const total = slides.children.length; let idx=0; let timer;
+    function go(i){ idx=(i+total)%total; slides.style.transform = `translateX(-${idx*100}%)`; [...dotsWrap.children].forEach((d,k)=> d.classList.toggle('active', k===idx)); reset(); }
+    function reset(){ clearInterval(timer); timer = setInterval(()=>go(idx+1), 3500); }
+    for(let i=0;i<total;i++){ const b=document.createElement('button'); b.className='dotBtn'+(i===0?' active':''); b.addEventListener('click',()=>go(i)); dotsWrap.appendChild(b); }
+    reset();
+  </script>
+</body>
+</html>
